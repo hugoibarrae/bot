@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot con OpenAI</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; }
+        #chatbox { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; }
+        .user { color: blue; font-weight: bold; }
+        .bot { color: green; font-weight: bold; }
+        input { width: 80%; padding: 10px; }
+        button { padding: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Asistente Virtual</h2>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Escribe tu mensaje...">
+    <button onclick="sendMessage()">Enviar</button>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value;
+            if (!userInput) return;
+
+            // Agregar mensaje del usuario al chat
+            document.getElementById("chatbox").innerHTML += `<p class="user">Tú: ${userInput}</p>`;
+            document.getElementById("userInput").value = "";
+
+            // Enviar mensaje a OpenAI
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer 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"
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [{ role: "system", content: "Eres un asistente útil para un evento." }, { role: "user", content: userInput }]
+                })
+            });
+
+            const data = await response.json();
+            const botResponse = data.choices[0].message.content;
+
+            // Agregar respuesta al chat
+            document.getElementById("chatbox").innerHTML += `<p class="bot">Bot: ${botResponse}</p>`;
+        }
+    </script>
+
+
+
+</body>
+</html>
